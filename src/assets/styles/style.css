@@ -1,0 +1,268 @@
+/* 表格公共样式 */
+.el-table th {
+    background: #f7fafc !important;
+    height: 40px;
+    color: #444;
+    font-weight: 400;
+}
+
+.el-table th,
+.el-table td {
+    text-align: left !important;
+}
+
+/*分页样式*/
+.el-pagination {
+    text-align: right;
+    margin-right: 10px;
+}
+
+.el-input__icon {
+    line-height: 0;
+}
+
+.reportBox .el-form-item__label {
+    text-align: left;
+}
+
+.reportBox .el-form-item.text-indent .el-form-item__label {
+    text-indent: 9px;
+}
+
+/*表单el-form样式*/
+.blockTit .el-form-item__label,
+.blockTableTit .el-form-item__label {
+    display: block !important;
+    width: 100%;
+    text-align: left;
+}
+
+/*表单el-radio样式*/
+.blockTit .el-radio-group,
+.el-checkbox-group {
+    padding-left: 45px;
+}
+
+/*行内样式*/
+.inline {
+    display: inline-block;
+}
+
+/*.fl{*/
+/*float: left;*/
+/*}*/
+
+/**/
+.cancer-title-blue {
+    color: #317ef7;
+    padding-left: 10px;
+    /* border-left: 2px solid #317ef7; */
+    margin: 0 0 20px 10px;
+    font-size: 16px;
+    position: relative;
+}
+
+.cancer-title-blue:after {
+    position: absolute;
+    content: '';
+    width: 2px;
+    height: 80%;
+    left: 0;
+    top: 10%;
+    background: #317ef7;
+}
+
+.el-badge__content.is-fixed {
+    z-index: 9;
+}
+
+.el-table th {
+    background: #eef1f6;
+    height: 40px;
+    color: #444;
+    font-weight: 400;
+}
+
+/*滚动条*/
+.scroll {
+    scrollbar-face-color: #fff;
+    scrollbar-shadow-color: #fff;
+    scrollbar-highlight-color: #ccc;
+    scrollbar-3dlight-color: #fff;
+    scrollbar-arrow-color: #f00;
+    scrollbar-track-color: #fff;
+}
+
+/*滚动条*/
+::-webkit-scrollbar {
+    width: 4px;
+    height: 10px;
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #e9ebf2
+}
+
+::-webkit-scrollbar-thumb {
+    background: #61aae6;
+    border-radius: 6px
+}
+
+/* 表单disabled样式 */
+.el-input.is-disabled .el-input__inner,
+.el-textarea.is-disabled .el-textarea__inner {
+    background: #ffffff !important;
+    color: #606266 !important;
+}
+
+.el-radio__input.is-disabled.is-checked+span.el-radio__label {
+    color: #409EFF !important;
+}
+
+.el-radio__input.is-disabled.is-checked .el-radio__inner {
+    background-color: #409EFF !important;
+    border-color: #409EFF !important;
+}
+
+.el-radio__input.is-disabled.is-checked .el-radio__inner::after {
+    background-color: #f5f7fa !important;
+}
+
+.el-input.is-disabled .el-input__inner {
+    background-color: #fff !important;
+    border-color: #dcdfe6 !important;
+    color: #606266 !important;
+    cursor: not-allowed !important;
+}
+
+.el-input.is-disabled.grayInput .el-input__inner {
+    background: #ededed !important;
+}
+
+.el-textarea.is-disabled .el-textarea__inner {
+    background-color: #fff !important;
+    border-color: #dcdfe6 !important;
+    color: #606266 !important;
+    cursor: not-allowed !important;
+}
+
+.el-checkbox__input.is-disabled.is-checked+span.el-checkbox__label {
+    color: #409EFF !important;
+    cursor: not-allowed !important;
+}
+
+.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner {
+    background-color: #409EFF !important;
+    border-color: #409EFF !important;
+}
+
+.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner::after {
+    border-color: #fff !important;
+}
+
+.el-row .el-textarea__inner,.el-textarea__inner{
+    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+}
+
+/*打印样式*/
+#form-print {
+    display: none;
+}
+
+.form-print-table {
+    margin: 20px auto;
+    width: 800px;
+}
+
+.form-print-table td {
+    border: 1px solid #000000;
+    height: 20px;
+    line-height: 20px;
+    padding: 10px;
+    width: 100px;
+    font-size: 14px;
+}
+
+.form-print-table-title {
+    text-align: center;
+    font-weight: 700;
+}
+
+.form-print-table-notice {
+    font-size: 12px;
+}
+
+.form-print-table-okorno {
+    text-align: center;
+}
+
+.underline {
+    text-decoration: underline
+}
+
+/* 肺肠合并 */
+
+.ldctForm .el-form {
+    font-size: 16px !important;
+}
+
+.ldctForm .el-form-item__content {
+    font-size: 16px !important;
+}
+
+.ldctForm .el-form-item__label {
+    font-size: 16px !important;
+    font-weight:bold;    
+}
+
+.ldctForm .el-radio__label {
+    font-size: 16px !important;
+}
+
+.ldctForm .el-checkbox__input.is-disabled.is-checked+span.el-checkbox__label {
+    color: #409EFF;
+    cursor: not-allowed;
+}
+
+/*表单样式表*/
+.ldctForm .form-container-item {
+    background: #fff;
+}
+
+.ldctForm .form-container-item-top {
+    height: 46px;
+    background: #F9F9FB;
+    padding: 8px 24px;
+    width: 100%;
+    list-style: none;
+}
+
+.ldctForm .form-container-item-top li {
+    float: left;
+    line-height: 30px;
+    height: 30px;
+    list-style: none;
+    display: inline-block;
+}
+
+.ldctForm .form-container-item-title {
+    width: calc(100% - 160px);
+    text-align: center;
+    font-size: 18px;
+    color: #409EFF;
+
+}
+
+.ldctForm .form-container-item-return {
+    padding-right: 10px;
+}
+
+.ldctForm .form-container-item-top .el-button {
+    padding: 0 !important;
+    color: #787878;
+}
+
+.ldctForm .form-container-item-return :hover {
+    color: #409EFF;
+}
