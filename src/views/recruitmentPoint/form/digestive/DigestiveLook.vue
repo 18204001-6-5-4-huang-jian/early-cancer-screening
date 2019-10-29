@@ -164,7 +164,9 @@
                     <el-radio :label="9">9，胃窦小弯</el-radio>
                     <el-radio :label="10">10，胃窦大弯</el-radio>
                     <el-radio :label="11">11，幽门</el-radio>
-                    <el-radio :label="12">12，其他部位</el-radio>
+                    <el-radio :label="13">12，胃窦</el-radio>
+                    <el-radio :label="14">13，胃体</el-radio>
+                    <el-radio :label="12">14，其他部位</el-radio>
                   </el-radio-group>
                 </el-form-item>
               </el-row>

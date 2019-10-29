@@ -92,7 +92,7 @@ import DICTIONARY from '@/views/common/dictionary'
         },
         {
             type: 'select',
-            title: '肝超生筛查状态',
+            title: '肝超声筛查状态',
             name: 'gaReportStatus',
             labelWidth:'120px',
             optionProps: {
@@ -157,7 +157,7 @@ import DICTIONARY from '@/views/common/dictionary'
         },
         {
             type: 'select',
-            title: '肝超生报告发放',
+            title: '肝超声报告发放',
             name: 'gaReportSendStatus',
             labelWidth:'120px',
             optionProps: {

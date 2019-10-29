@@ -137,10 +137,25 @@ import mixin from '@/mixins/mixins'
         hospital:this.$route.query.hospital,
         flag:this.$route.query.flag,
         checkDayDate:this.$route.query.checkDayDate,
-        radioCheck:this.$route.query.radioCheck}})
+        radioCheck:this.$route.query.radioCheck,
+        surverId: this.$route.query.surverId,
+        id: this.$route.query.id,
+        flag: this.$route.query.flag
+        }})
       },
-      goback(){
-        this.$router.push({path:'/appointment/addappoint',query:{resource:this.$route.query.resource,hospital:this.$route.query.hospital,checkDayDate:this.$route.query.checkDayDate,radioCheck:this.$route.query.radioCheck}})
+      goback() {
+        this.$router.push({
+          path: "/appointment/addappoint",
+          query: {
+            resource: this.$route.query.resource,
+            hospital: this.$route.query.hospital,
+            checkDayDate: this.$route.query.checkDayDate,
+            radioCheck: this.$route.query.radioCheck,
+            surverId: this.$route.query.surverId,
+            id: this.$route.query.id,
+            flag: this.$route.query.flag
+          }
+        });
       },
        //每页显示查询结果条数变更事件，做重新查询操作
       pageSizeChange(pageSize) {

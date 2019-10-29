@@ -120,7 +120,7 @@ export default {
       this.saveSearchParams()
       this.$router.push({
         path: "/evaluation/evaluationresult",
-        query: { id: row.id }
+        query: { id: row.id, itemsUnderIt: row.itemsUnderIt}
       });
       // this.$emit('watchResultHandler', row, true)
     },

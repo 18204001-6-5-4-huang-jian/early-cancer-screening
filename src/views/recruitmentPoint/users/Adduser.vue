@@ -101,8 +101,11 @@
                         </el-col>
                          <el-col :span="8">
                             <el-form-item label="账户角色:"  prop="roleId" label-width="90px">
-                            <el-select size="small" v-model="x.roleId" placeholder="请选择" clearable :disabled="x.disabled">
-                                <el-option :label="item.name" :value="item.id" v-for="item in deptroleList" :key="item.roleId"></el-option>
+                            <el-select size="small" v-model="x.roleId" placeholder="请选择" clearable :disabled="x.disabled" v-if="x.show">
+                                <el-option :label="item.name" :value="item.id" v-for="item in x.deptroleList" :key="item.roleId"></el-option>
+                            </el-select>
+                           <el-select size="small" v-model="x.roleName" placeholder="请选择" clearable :disabled="x.disabled" v-if="!x.show">
+                                <el-option  :value="item.id" v-for="item in x.deptroleList" :key="item.roleId">{{x.roleName}}</el-option>
                             </el-select>
                             </el-form-item>
                         </el-col>
@@ -151,15 +154,15 @@ import DeptreeDialog from '@/views/recruitmentPoint/users/DeptreeDialog'
           idCardNegative:null,
           userRoleDtoList:[{
               dataLevel:null,
-              roleId:null,
+              roleId:'',
               deptName:null,
               deptId:null,
+              deptroleList:[]
             }],             
           },
         filePositive: [{url: require('@/assets/img/avatarTC.png')}],
         fileNegative: [{url: require('@/assets/img/avatarTC.png')}],
         pwd:'000000',
-        deptroleList:[],
         imageUrl: '',
         serverName:SERVER_NAME,
         dataLevel:DICTIONARY.dataLevel,
@@ -190,13 +193,23 @@ import DeptreeDialog from '@/views/recruitmentPoint/users/DeptreeDialog'
                 { message: '身份证号格式不对', trigger: 'blur', validator: VALIDATE.idCard}
             ]
         },
-        id:''
+        id:'',
+        data:[],//招募 筛查 新添时候的账户角色数据
+        huang:[]
       }
     },
     components:{
         DeptreeDialog
     },
     created(){
+        if(sessionStorage.getItem('deptmentType') != 'gljg' && sessionStorage.getItem('deptmentType') != 'gj'){
+            //获取 招募机构和筛查机构 账户角色下拉数据字典
+            this.getDeptroleList()
+        }
+        if(sessionStorage.getItem('deptmentType') == 'gljg' || sessionStorage.getItem('deptmentType') == 'gj'){
+            //获取 管理机构账户角色下拉数据字典
+            this.getGlDeptroleList()
+        }
         // 查看
         if(this.$route.query.id){
             this.findUserInfo();
@@ -211,7 +224,6 @@ import DeptreeDialog from '@/views/recruitmentPoint/users/DeptreeDialog'
         if(this.$route.path.indexOf('/user/adduser')>-1){
             this.jg=true;
         }
-        
     },
     mounted(){
         // flag-0,查看
@@ -220,8 +232,59 @@ import DeptreeDialog from '@/views/recruitmentPoint/users/DeptreeDialog'
         }
     },
     methods: {
+     getDeptroleList(){
+            let deptId = sessionStorage.getItem('deptId');
+            this.$axios_http({
+                url: "/base/sys/role/findRolesByDept/" + deptId,
+                data: {},
+                vueObj: this 
+            }).then((res) => {
+                if(res.data.status=="SUCCESS"){
+                    let result = res.data.result;
+                    this.data = res.data.result;
+                    for(let k = 0;k<result.length;k++){
+                           result[k].id = result[k].id + '';
+                    }
+                    for(let k=0;k<this.formData.userRoleDtoList.length;k++){
+                        this.formData.userRoleDtoList[k].deptroleList = result;
+                        this.formData.userRoleDtoList[k].roleId = this.formData.userRoleDtoList[k].roleId + '';
+                        this.formData.userRoleDtoList[k].show = true;
+                        //添加用户，移除账户角色校验效果
+                        if(!this.$route.query.id){
+                           this.$refs['formInlinelist'+k][0].resetFields();
+                        }
+                    }
+                    this.$forceUpdate();
+                }
+            })
+     },
+     getGlDeptroleList() {
+         let deptId = sessionStorage.getItem('deptId');
+         this.$axios_http({
+             url: "/base/sys/role/findRolesByDept/" + deptId,
+             data: {},
+             vueObj: this 
+         }).then((res) => {
+             if(res.data.status=="SUCCESS"){
+                 let result = res.data.result;
+                 for(let k = 0;k<result.length;k++){
+                     result[k].id = result[k].id + '';
+                 }
+                 for(let k=0;k<this.formData.userRoleDtoList.length;k++){
+                     this.formData.userRoleDtoList[k].deptroleList = [];
+                     this.formData.userRoleDtoList[k].roleId = this.formData.userRoleDtoList[k].roleId + '';
+                     this.formData.userRoleDtoList[k].show = true;
+                     //添加用户，移除账户角色校验效果
+                     if(!this.$route.query.id){
+                        this.$refs['formInlinelist'+k][0].resetFields();
+                     }
+                 }
+                 this.$forceUpdate();
+             }
+         })
+     },
      // 查看用户基本信息
-      findUserInfo(){
+     findUserInfo(){
         this.$axios_http({
           url: "/base/sys/user/findUserInfoAndRoleInfo",
           data: {
@@ -234,6 +297,36 @@ import DeptreeDialog from '@/views/recruitmentPoint/users/DeptreeDialog'
             this.formData=res.data.result;
             this.formData.userRoleDtoList.filter(item => {
                 item.disabled=true;
+                if(sessionStorage.getItem('deptmentType') == 'gljg' || sessionStorage.getItem('deptmentType') == 'gj'){
+                //获取 管理机构和国家 账户角色下拉数据字典
+                this.$axios_http({
+                    url: "/base/sys/role/findRolesByDept/" + item.deptId,
+                    data: {},
+                    vueObj: this 
+                }).then((res) => {
+                    if(res.data.status=="SUCCESS"){
+                        let result = res.data.result;
+                        let itemArray = []
+                        for(let k = 0;k<result.length;k++){
+                            result[k].id = result[k].id + '';
+                            itemArray.push(result[k].id)
+                        }
+                        for(let k=0;k<this.formData.userRoleDtoList.length;k++){
+                            this.formData.userRoleDtoList[k].deptroleList = result;
+                            this.formData.userRoleDtoList[k].roleId = this.formData.userRoleDtoList[k].roleId + '';
+                            itemArray.find((value)=>{
+                                if(value == this.formData.userRoleDtoList[k].roleId){
+                                    this.formData.userRoleDtoList[k].show = true;
+                                }else{
+                                    this.formData.userRoleDtoList[k].show = false;
+                                }
+                            })
+                        }
+                        // console.log(this.formData.userRoleDtoList)
+                        this.$forceUpdate()
+                    }
+                })
+               }
             })
             this.disabled=true;
             if(this.formData.idCardPositive){
@@ -242,7 +335,7 @@ import DeptreeDialog from '@/views/recruitmentPoint/users/DeptreeDialog'
             if(this.formData.idCardNegative){
                 this.fileNegative[0].url=SERVER_NAME+'/base/file/downfile?filePath='+this.formData.idCardNegative
             }
-          }
+        }
         })
     },
      uploadUrl(){
@@ -283,10 +376,13 @@ import DeptreeDialog from '@/views/recruitmentPoint/users/DeptreeDialog'
      add(){// 添加账户信息
         this.formData.userRoleDtoList.push({
               dataLevel:null,
-              roleId:null
+              roleId:'',
+              deptroleList:sessionStorage.getItem('deptmentType') != 'gljg' && sessionStorage.getItem('deptmentType') != 'gj'?this.data:[],
+              show:true
             });
         // 控制删除按钮显示隐藏
         this.delBtnShow=true;
+        // console.log(this.formData.userRoleDtoList)
       },
       submit(){
         // 校验是否全部通过
@@ -357,8 +453,8 @@ import DeptreeDialog from '@/views/recruitmentPoint/users/DeptreeDialog'
       },
     //获取部门树弹窗传来的点击的值
       rowData(val){
-          this.formData.userRoleDtoList[val.index].deptName=val.deptName;
-          this.formData.userRoleDtoList[val.index].deptId=val.id;
+          this.formData.userRoleDtoList[val.index].deptName = val.deptName;
+          this.formData.userRoleDtoList[val.index].deptId = val.id;
           //根据所选机构 请求账户角色信息
           this.getDeptroleData(val.id,val.index);
       },

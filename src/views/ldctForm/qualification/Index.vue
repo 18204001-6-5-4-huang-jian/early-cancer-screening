@@ -1453,6 +1453,15 @@ import mixin from '@/mixins/mixins'
                     callback()
                 }
             };
+            var validatesmokeNumber = (rule, value, callback) => {
+                if (value && !(/^[0-9]{1,}$/.test(value))) {
+                    callback(new Error('正整数'))
+                }else if(value == 0) {
+                    callback(new Error('正整数'))
+                }else{
+                    callback();
+                }
+            };
             var vcity = {
                 11: "北京", 12: "天津", 13: "河北", 14: "山西", 15: "内蒙古",
                 21: "辽宁", 22: "吉林", 23: "黑龙江", 31: "上海", 32: "江苏",
@@ -1810,6 +1819,14 @@ import mixin from '@/mixins/mixins'
                     smokeCheckList: [
                         {required: true, message: '必填', trigger: 'change'}
                     ],
+                    smokeExposureFamilyNumber: [
+                        {required: true, message: '必填', trigger: 'blur'},
+                        {validator: validatesmokeNumber, trigger: 'blur'}
+                    ],
+                    smokeExposureColleagueNumber: [
+                        {required: true, message: '必填', trigger: 'blur'},
+                        {validator: validatesmokeNumber, trigger: 'blur'}
+                    ],
                     smokeCountBranchDay: [
                         {required: true, message: '必填', trigger: 'blur'},
                         {validator: validateNumber300, trigger: 'blur'}
@@ -2011,35 +2028,37 @@ import mixin from '@/mixins/mixins'
             },
             // 身份证号的校验
             idCardChange(val) {
-                if(val){
-                    this.$axios_http({
-                        method: 'post',
-                        url: "/base/system/checkIdCardBlackList",
-                        data:{
-                            idCard:val
-                        },
-                        vueObj: this
-                    }).then(({data:{status,result,code}}) => {
-                        if(code === 'IDCARD_YEAR_ERRO') {
-                            // 年龄既不符合肺肠，也不符合早诊
-                            this.validateIdCard()
-                        } else if(code === 'IDCARD_YEAR_FC_ERRO_ZZ_SUCCESS') {
-                            // 年龄既不符合肺肠，但符合早诊---45-49岁之间，跳至早诊
-                            this.personFullTip = 1
-                            this.personFull = true
-                            // this.findFa().then(({data:{result,status}})=>{
-                            //     if(status === 'SUCCESS') {
-                            //         this.personFullCheck = result
-                            //         this.personFullTip = 1
-                            //         this.personFull = true
-                            //     }
-                            // })
-                        }else if(status == 'ERROR' && code != 'IDCARD_YEAR_ERRO' && code != 'IDCARD_YEAR_FC_ERRO_ZZ_SUCCESS'){
-                            // 黑盒子：5年内做过肺肠的
-                            this.form.idCard = null
-                        }
-                    })
-                }
+                this.$refs['form'].validateField('idCard',(errorMessage)=>{
+                    if(this.form.idCard && errorMessage==''){
+                        this.$axios_http({
+                            method: 'post',
+                            url: "/base/system/checkIdCardBlackList",
+                            data:{
+                                idCard:val
+                            },
+                            vueObj: this
+                        }).then(({data:{status,result,code}}) => {
+                            if(code === 'IDCARD_YEAR_ERRO') {
+                                // 年龄既不符合肺肠，也不符合早诊
+                                this.validateIdCard()
+                            } else if(code === 'IDCARD_YEAR_FC_ERRO_ZZ_SUCCESS') {
+                                // 年龄既不符合肺肠，但符合早诊---45-49岁之间，跳至早诊
+                                this.personFullTip = 1
+                                this.personFull = true
+                                // this.findFa().then(({data:{result,status}})=>{
+                                //     if(status === 'SUCCESS') {
+                                //         this.personFullCheck = result
+                                //         this.personFullTip = 1
+                                //         this.personFull = true
+                                //     }
+                                // })
+                            }else if(status == 'ERROR' && code != 'IDCARD_YEAR_ERRO' && code != 'IDCARD_YEAR_FC_ERRO_ZZ_SUCCESS'){
+                                // 黑盒子：5年内做过肺肠的
+                                this.form.idCard = null
+                            }
+                        })
+                    }
+                })
             },
             // 身份证年龄校验弹窗
             validateIdCard(){

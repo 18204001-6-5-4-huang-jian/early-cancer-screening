@@ -251,6 +251,10 @@ import { dateFilter } from "@/filters/filter"
       dialogCancer() {
         this.dialogVisible = false
         this.$refs.formData.resetFields()
+        // 解决表单重置后，daterange默认值的bug
+        this.formData.valueTime = null
+        this.formData.ruleBegin = null
+        this.formData.ruleEnd = null
       },
       dialogOK() {
         this.$refs.formData.validate((valid) => {

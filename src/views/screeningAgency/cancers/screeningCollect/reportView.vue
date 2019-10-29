@@ -230,16 +230,18 @@ import mixin from '@/mixins/mixins'
                         this.form = res.data.result;
                     }
                 });
-                this.$axios_http({
-                    url: '/base/sxhd/find/report/pathology/'+this.$route.query.PathologyId,
-                    data: {},
-                    vueObj: this
-                }).then((res) => {
-                    if (res.data.status == "SUCCESS") {
-                        //病理报告
-                        this.form1 =res.data.result;
-                    }
-                })
+                if(this.$route.query.PathologyId) {
+                    this.$axios_http({
+                        url: '/base/sxhd/find/report/pathology/'+this.$route.query.PathologyId,
+                        data: {},
+                        vueObj: this
+                    }).then((res) => {
+                        if (res.data.status == "SUCCESS") {
+                            //病理报告
+                            this.form1 =res.data.result;
+                        }
+                    })
+                }
             }else if(this.$route.query.type == 'cj'){
                 this.$axios_http({
                     url: "/base/cj/find/cjReportResult/" + this.$route.query.reportId,
@@ -251,16 +253,18 @@ import mixin from '@/mixins/mixins'
                         this.form = res.data.result;
                     }
                 });
-                this.$axios_http({
-                    url: '/base/cj/find/cjPathologyReportResult/'+this.$route.query.PathologyId,
-                    data: {},
-                    vueObj: this
-                }).then((res) => {
-                    if (res.data.status == "SUCCESS") {
-                        //病理报告
-                        this.form1 =res.data.result;
-                    }
-                })
+                if(this.$route.query.PathologyId) {
+                    this.$axios_http({
+                        url: '/base/cj/find/cjPathologyReportResult/'+this.$route.query.PathologyId,
+                        data: {},
+                        vueObj: this
+                    }).then((res) => {
+                        if (res.data.status == "SUCCESS") {
+                            //病理报告
+                            this.form1 =res.data.result;
+                        }
+                    })
+                }
             }
             
         },

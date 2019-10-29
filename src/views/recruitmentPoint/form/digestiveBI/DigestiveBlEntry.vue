@@ -417,8 +417,10 @@ var signedDate='';
       this.getPersonDetailFun(this.$route.query.personId,this.$route.query.surverId);
       if(this.$route.query.pathologyId){
         this.getResultInfo();
+      }else{
+        //录入查询上消表单对应题目值
+        this.queryPathologyInfo()
       }
-      this.queryPathologyInfo()
     },
     mounted(){
 

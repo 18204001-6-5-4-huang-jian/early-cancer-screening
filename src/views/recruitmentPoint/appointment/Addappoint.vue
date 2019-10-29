@@ -70,10 +70,12 @@
     <div class="period" >
       <div class="titTop">
         <span slot="title" class="title">选择受试者</span>
-        <router-link :to="{path:'/appointment/subjectlist',query:{resource:$route.query.resource,
+        <router-link :to="{path:'/appointment/subjectlist',query:{resource:formInline.checkProject,
         hospital:formInline.hospital,
         checkDayDate:checkDayDate,
         flag:$route.query.flag,
+        surverId:$route.query.surverId,
+        id:$route.query.id,
         radioCheck:radioCheck}}">
           <el-button type="success" size="small">添加</el-button>
         </router-link>
@@ -182,7 +184,10 @@ export default {
       changeSelectStatus: false,
       selectTableRow: [],
       radioCheck: null,
-      rulePattern: null   //放号机制
+      rulePattern: null,   //放号机制
+      // 再次预约暂存的字段
+      surverId:null,
+      personId:null
     };
   },
   created() {
@@ -292,12 +297,21 @@ export default {
      * flag--true,初始化加载，--false,预约完一项，继续预约下一项
      */
     getBookingProject(flag) {
-      this.$axios_http({
-        url: "/base/booking/bookingProject",
-        data: {
+      let obj = {}
+      if(flag){
+        obj = Object.assign({},{
           personId: this.$route.query.id,
           surverId: this.$route.query.surverId
-        },
+        })
+      }else{
+        obj = Object.assign({},{
+          personId: this.personId,
+          surverId: this.surverId
+        })
+      }
+      this.$axios_http({
+        url: "/base/booking/bookingProject",
+        data: obj,
         vueObj: this
       }).then(res => {
         if (res.data.status == "SUCCESS") {
@@ -430,6 +444,8 @@ export default {
           } else {
             // 来源于列表预约
             if (res.data.result.findNext) {
+              this.surverId = res.data.operationDayRecordList[0].surverId
+              this.personId = res.data.operationDayRecordList[0].personId
               this.$route.query.surverId && this.getBookingProject(false);
             } else {
               localStorage.setItem("selectTableRow", "");

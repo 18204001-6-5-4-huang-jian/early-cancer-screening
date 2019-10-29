@@ -10,6 +10,7 @@
 
 <template>
     <el-table
+            v-loading="loading || false"
             :data="tableData"
             tooltip-effect="dark"
             border
@@ -50,7 +51,7 @@
 
     export default {
         name: 'table-com',
-        props: ['propsData', 'tableData'],
+        props: ['propsData', 'tableData', 'loading'],
         data() {
             return {
                 case: {

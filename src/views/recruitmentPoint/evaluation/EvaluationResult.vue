@@ -104,8 +104,7 @@
                 <div class="cancer-email--table r-b--border">{{resultBody.evaluateDate | dateFilter}}</div>
               </el-col>
               <el-col :span="4">
-                <div class="cancer-email--table r-b--border" v-if="resultBody.num == 1">{{resultBody.lungRiskStatus | cancerRiskFilter}}</div>
-                <div class="cancer-email--table r-b--border" v-else>-</div>
+                <div class="cancer-email--table r-b--border">{{resultBody.lungRiskStatus | cancerRiskFilter}}</div>
               </el-col>
               <el-col :span="4">
                 <div class="cancer-email--table r-b--border">{{resultBody.mammaryRiskStatus | cancerRiskFilter}}</div>
@@ -117,8 +116,7 @@
                 <div class="cancer-email--table r-b--border">{{resultBody.gastrointestinalRiskStatus | cancerRiskFilter}}</div>
               </el-col>
               <el-col :span="4">
-                <div class="cancer-email--table" v-if="resultBody.num == 1">{{resultBody.colorectalRiskStatus | cancerRiskFilter}}</div>
-                <div class="cancer-email--table" v-else>-</div>
+                <div class="cancer-email--table">{{resultBody.colorectalRiskStatus | cancerRiskFilter}}</div>
                 </el-col>
             </el-row>
           </el-row>
@@ -1821,7 +1819,7 @@ import REPORT_DICTIONARY from '@/views/recruitmentPoint/form/evaluation/dictiona
            url: '/base/measurement/edit/evaluateStatus',
            data: {
              id: this.$route.query.id, 
-             itemsUnderIt: sessionStorage.getItem('itemsUnderIt'),
+             itemsUnderIt: this.$route.query.itemsUnderIt,
              noticeStatus: 1
             },
            vueObj: this

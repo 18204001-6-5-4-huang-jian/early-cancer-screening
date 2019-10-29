@@ -704,11 +704,11 @@ const DICTIONARY = {
   //筛查状态
   ScreeningStatus:[
     {
-      id: '1',
+      id: 1,
       name: '已检查'
     },
     {
-      id: '2',
+      id: 2,
       name: '未检查'
     },
   ],

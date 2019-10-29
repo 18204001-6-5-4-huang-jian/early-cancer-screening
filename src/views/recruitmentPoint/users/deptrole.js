@@ -18,7 +18,10 @@ export default {
         // 清空 所选的账户角色
         this.formData.userRoleDtoList[index].roleId = null;
         // 赋值
-        this.deptroleList = [...result]
+        this.formData.userRoleDtoList[index].deptroleList = [...result];
+        this.formData.userRoleDtoList[index].show = true;
+        // console.log(this.formData.userRoleDtoList)
+        
       }
     }
   }

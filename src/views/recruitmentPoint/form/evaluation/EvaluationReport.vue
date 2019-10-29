@@ -774,7 +774,8 @@
         :visible.sync="resultTips"
         width="600px"
         :close-on-click-modal="false"
-        :show-close="false">
+        :show-close="false"
+        :before-close="closeDialog">
       <div class="submitDialog-form"
          style="display:flex;vertical-align: center;font-size: 16px;line-height: 1.8;">
         <i class="el-icon-warning"
@@ -997,6 +998,7 @@ import axios from 'axios'
         zzFlagCheck: null,   //显示肺 or 肠选择框  1、肺；2、肠；3、肺+肠； null、两个都没有
         zzFaFlag: null,  //肺肠入组失败进入早诊做肺癌标志  1、是  2、否
         zzCaFlag: null,  //肺肠入组失败进入早诊做肠癌标志  1、是  2、否
+        editFlag: false,  //编辑标识
       resultBody:{},   //查看返回的数据体，用于提交审核数据提交
       imgSrc:null,  //身份证图片
       logsDialog:false,
@@ -1153,10 +1155,10 @@ import axios from 'axios'
             { trigger: 'blur', validator: VALIDATE.checkFont},
           ],
           sex: [
-            { required: true, message: '必填', trigger: 'blur' },
+            { required: true, message: '必填', trigger: 'change' },
           ],
           birthday: [
-            { required: true, message: '必填', trigger: 'blur' },
+            { required: true, message: '必填', trigger: 'change' },
           ],
           phone: [
             { required: true, message: '必填', trigger: 'blur' },
@@ -1167,7 +1169,7 @@ import axios from 'axios'
           //   { trigger: 'blur', validator: VALIDATE.checkPhone},
           // ],
           flok: [
-            { required: true, message: '必填', trigger: 'blur' },
+            { required: true, message: '必填', trigger: 'change' },
           ],
           flokOther: [
             { required: true, message: '必填', trigger: 'blur' },
@@ -1211,26 +1213,26 @@ import axios from 'axios'
             { trigger: 'blur', validator: VALIDATE.checkYW},
           ],
           a04:[
-            { required: true, message: '必填', trigger: 'blur' },
+            { required: true, message: '必填', trigger: 'change' },
           ],
           a05:[
-            { required: true, message: '必填', trigger: 'blur' },
+            { required: true, message: '必填', trigger: 'change' },
           ],
           a051:[
             { required: true, message: '必填', trigger: 'blur' },
             { trigger: 'blur', validator: VALIDATE.checkY},
           ],
           a06:[
-            { required: true, message: '必填', trigger: 'blur' },
+            { required: true, message: '必填', trigger: 'change' },
           ],
           a06Other:[
             { required: true, message: '必填', trigger: 'blur' },
           ],
           a07:[
-            { required: true, message: '必填', trigger: 'blur' },
+            { required: true, message: '必填', trigger: 'change' },
           ],
           a071Arr:[
-            { required: true, message: '必填', trigger: 'blur' },
+            { required: true, message: '必填', trigger: 'change' },
           ],
           b01:[
             { required: true, message: '必填', trigger: 'change' },
@@ -1669,6 +1671,13 @@ import axios from 'axios'
         Object.assign(formData.hosEvaluateFormPO,this.hosEvaluateFormPO);
         formData.submitType=type;
         if(flag=='edit'){
+          if(this.itemsUnderIt=='2'){
+            formData.zzCaFlag = this.resultBody.zzCaFlag ? 1 : 2
+            formData.zzFaFlag = this.resultBody.zzFaFlag ? 1 : 2
+          }else{
+            formData.zzCaFlag = this.resultBody.zzCaFlag
+            formData.zzFaFlag = this.resultBody.zzFaFlag
+          }
           formData.hosEvaluateInfoPO.id=this.id;
         }else{
           delete formData.hosEvaluateInfoPO;
@@ -1756,7 +1765,24 @@ import axios from 'axios'
                       }
                       this.resultTips = true;                      
                     }else{
-                      this.addEvaluate(formData,flag,type);
+                      // 不满足肺肠项目，进入早诊问卷，先保存草稿，再提交问卷
+                      if(this.itemsUnderIt!='2' && this.resultBody.zzCaFlag==null && this.resultBody.zzFaFlag==null) {
+                        this.findFa().then(({data:{result,status}})=>{
+                          if(status === 'SUCCESS') {
+                              this.zzFlagCheck = result.flag
+                          }
+                        })
+                        this.resultTips = true; 
+                        this.editFlag = true;
+                      }else{
+                        // 编辑接口：1、早诊保存草稿，再提交问卷，要弹弹窗。2、早诊+ 肺肠早诊，审核不通过再编辑，不需要弹窗
+                        if(this.itemsUnderIt=='2' && this.resultBody.zzCaFlag==null && this.resultBody.zzFaFlag==null){
+                          this.resultTips = true; 
+                          this.editFlag = true;
+                        }else{
+                          this.addEvaluate(formData,flag,type);
+                        }
+                      }
                     }
                   }
                   }).catch( res => {
@@ -1774,7 +1800,24 @@ import axios from 'axios'
                 }
                 this.resultTips = true; 
               }else{
-                this.addEvaluate(formData,flag,type);
+                // 不满足肺肠项目，进入早诊问卷，先保存草稿，再提交问卷
+                if(this.itemsUnderIt!='2' && this.resultBody.zzCaFlag==null && this.resultBody.zzFaFlag==null) {
+                  this.findFa().then(({data:{result,status}})=>{
+                    if(status === 'SUCCESS') {
+                        this.zzFlagCheck = result.flag
+                    }
+                  })
+                  this.resultTips = true; 
+                  this.editFlag = true;
+                }else{
+                   // 编辑接口：1、早诊保存草稿，再提交问卷，要弹弹窗。2、早诊+ 肺肠早诊，审核不通过再编辑，不需要弹窗
+                  if(this.itemsUnderIt=='2' && this.resultBody.zzCaFlag==null && this.resultBody.zzFaFlag==null){
+                    this.resultTips = true; 
+                    this.editFlag = true;
+                  }else{
+                    this.addEvaluate(formData,flag,type);
+                  }
+                }
               }
             }
             }
@@ -1782,43 +1825,44 @@ import axios from 'axios'
       },
       // 检查身份证号是否已经存在
       checkIdcard(){
-        if(this.hosPersonInfoPO.idCard){
-           this.$axios_http({
-            url: '/base/measurement/get/evaluateIdCardStatus',
-            data: {
-              idCard:this.hosPersonInfoPO.idCard,
-              id:this.$route.query.personId || null
-            },
-            vueObj: this
-          }).then((res) => {
-            if(res.data.status=="SUCCESS"){
-              this.checkcard=true;
-              }else if(res.data.code=='EVALUATE_VERIFICATION_IDCARD_ERROR'){
-                // this.checkcard=false;
-                // 提示入组失败
-                this.$confirm('该受试者已经入组，是否重新录入新的受试者信息？', '提示', {
-                  confirmButtonText: '确定',
-                  // cancelButtonText: '取消',
-                  showCancelButton:false,
-                  showClose:false,
-                  type: 'warning'
-                }).then(() => {
-                  this.imgSrc = null
-                  this.$refs['hosPersonInfoPO'].resetFields()     
-                  this.$refs['hosEvaluateFormPO'].resetFields()
-                }).catch(() => {
-                  this.imgSrc = null
-                  this.$refs['hosPersonInfoPO'].resetFields()     
-                  this.$refs['hosEvaluateFormPO'].resetFields()    
-                });
-              }else if(res.data.code=='IDCARD_BLACKLIST_ERRO'){
-                this.hosPersonInfoPO.idCard = null
-              }else if(res.data.code=='IDCARD_YEAR_ERRO'){
-                this.validateIdCard()
-              }
-          })
-        }
-       
+        this.$refs['hosPersonInfoPO'].validateField('idCard',(errorMessage)=>{
+          if(this.hosPersonInfoPO.idCard && errorMessage==''){
+             this.$axios_http({
+              url: '/base/measurement/get/evaluateIdCardStatus',
+              data: {
+                idCard:this.hosPersonInfoPO.idCard,
+                id:this.$route.query.personId || null
+              },
+              vueObj: this
+            }).then((res) => {
+              if(res.data.status=="SUCCESS"){
+                this.checkcard=true;
+                }else if(res.data.code=='EVALUATE_VERIFICATION_IDCARD_ERROR'){
+                  // this.checkcard=false;
+                  // 提示入组失败
+                  this.$confirm('该受试者已经入组，是否重新录入新的受试者信息？', '提示', {
+                    confirmButtonText: '确定',
+                    // cancelButtonText: '取消',
+                    showCancelButton:false,
+                    showClose:false,
+                    type: 'warning'
+                  }).then(() => {
+                    this.imgSrc = null
+                    this.$refs['hosPersonInfoPO'].resetFields()     
+                    this.$refs['hosEvaluateFormPO'].resetFields()
+                  }).catch(() => {
+                    this.imgSrc = null
+                    this.$refs['hosPersonInfoPO'].resetFields()     
+                    this.$refs['hosEvaluateFormPO'].resetFields()    
+                  });
+                }else if(res.data.code=='IDCARD_BLACKLIST_ERRO'){
+                  this.hosPersonInfoPO.idCard = null
+                }else if(res.data.code=='IDCARD_YEAR_ERRO'){
+                  this.validateIdCard()
+                }
+            })
+          }
+        })
       },
             
       //上传身份证图片
@@ -1874,21 +1918,32 @@ import axios from 'axios'
       },
       // 新增保存表单
       next() {
+        let _url=''
         let formData={
-          hosPersonInfoPO:{},
-          hosEvaluateFormPO:{},
-        };
-        Object.assign(formData.hosPersonInfoPO,this.hosPersonInfoPO);
-        Object.assign(formData.hosEvaluateFormPO,this.hosEvaluateFormPO);
-        formData.submitType=1;
-        // 不满足肺肠是，跳至早诊，是否勾选了“特殊情况需要增加肺癌筛查”
-        formData.zzFaFlag = this.zzFaFlag ? 1 : 2
-        formData.zzCaFlag = this.zzCaFlag ? 1 : 2
-        if(this.hosPersonInfoPO.headPicPath || this.imgSrc){
-            formData.hosPersonInfoPO.headPicPath = this.imgSrc?this.imgSrc:this.hosPersonInfoPO.headPicPath;
+            hosPersonInfoPO:{},
+            hosEvaluateFormPO:{},
+            hosEvaluateInfoPO: {}
+          };
+          Object.assign(formData.hosPersonInfoPO,this.hosPersonInfoPO);
+          Object.assign(formData.hosEvaluateFormPO,this.hosEvaluateFormPO);
+          formData.submitType=1;
+          // 不满足肺肠是，跳至早诊，是否勾选了“特殊情况需要增加肺癌筛查”
+          formData.zzFaFlag = this.zzFaFlag ? 1 : 2
+          formData.zzCaFlag = this.zzCaFlag ? 1 : 2
+          if(this.hosPersonInfoPO.headPicPath || this.imgSrc){
+              formData.hosPersonInfoPO.headPicPath = this.imgSrc?this.imgSrc:this.hosPersonInfoPO.headPicPath;
+        }
+        if(this.editFlag){
+          // 先保存草稿再提交审核
+          _url='/base/measurement/edit/evaluate'
+          formData.hosEvaluateInfoPO.id=this.id;
+        }else{
+          // 新增提交审核
+          _url='/base/measurement/add/evaluate'
+          delete formData.hosEvaluateInfoPO
         }
         this.$axios_http({
-          url: '/base/measurement/add/evaluate',
+          url: _url,
           data: formData,
           vueObj: this
         }).then((res) => {
@@ -1898,6 +1953,8 @@ import axios from 'axios'
             }
         })
       },
+      // 关闭弹窗
+      closeDialog() {},
       // 判断提交表单后是录入3个结果还是2个结果
       // openDialogTips(){
       //   let con = null;

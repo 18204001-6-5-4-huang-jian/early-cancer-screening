@@ -73,6 +73,7 @@ export default {
       // 存储登录人的机构
       sessionStorage.setItem("deptName", obj.deptName);
       sessionStorage.setItem("deptmentType", obj.deptmentType);
+      sessionStorage.setItem("deptId", obj.deptId);
       this.$store.commit("common/deptNameChange", obj.deptName);
       this.$axios_http({
         url: "/base/system/find/resources",

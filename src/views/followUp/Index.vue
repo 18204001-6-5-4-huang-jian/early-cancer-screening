@@ -183,9 +183,12 @@
       },
       //搜索
       searchHandler(val) {
-        this.formData = val
-        this.query()
-        this.query1()
+        this.formData = val;
+        if(this.activeName == '1'){
+              this.query()
+        }else if(this.activeName == '2'){
+              this.query1()
+        }
       },
 
       // 分页=>改变每页条数
@@ -263,7 +266,7 @@
           })
       },
       handleClick(){
-         if(this.activeName == '1'){
+      if(this.activeName == '1'){
               this.query()
          }else if(this.activeName == '2'){
               this.query1()

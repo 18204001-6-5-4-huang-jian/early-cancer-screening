@@ -5,7 +5,7 @@
                     @searchChange="searchHandler"></search-com>
     <cancer-widget>
         <!--表格-->
-        <table-com :propsData="propsData" :tableData="tableData">
+        <table-com :propsData="propsData" :tableData="tableData" :loading="loading">
         <template slot="operating">
           <el-table-column
             label="CT报告"
@@ -15,7 +15,7 @@
                 <el-button type="text" size="small" v-if="scope.row.ctReportStatus == 1" @click="reportView(scope.row,'ct')">查看报告</el-button>
                 <el-button type="text" size="small" v-if="scope.row.ctReportSendStatus == 2 && scope.row.ctReportStatus == 1" @click="sendReport(1,scope.row)">发放报告</el-button>
                 <el-button type="text" size="small" v-if="scope.row.ctReportSendStatus == 1" @click="seeReport(1,scope.row)">查看发放登记</el-button>
-                <div v-if="scope.row.ctReportStatus != null && scope.row.ctReportStatus != 1">未筛查</div>
+                <div v-if="scope.row.ctReportStatus != null && scope.row.ctReportStatus != 1">-</div>
                 <div v-if="scope.row.ctReportStatus == null">-</div>
             </template>
           </el-table-column>
@@ -27,7 +27,7 @@
                 <el-button type="text" size="small" v-if="scope.row.rxxxReportStatus == 1"  @click="reportView(scope.row,'rxxx')">查看报告</el-button>
                 <el-button type="text" size="small" v-if="scope.row.rxxxReportSendStatus == 2 && scope.row.rxxxReportStatus == 1" @click="sendReport(2,scope.row)">发放报告</el-button>
                 <el-button type="text" size="small" v-if="scope.row.rxxxReportSendStatus == 1" @click="seeReport(2,scope.row)">查看发放登记</el-button>
-                <div v-if="scope.row.rxxxReportStatus != null && scope.row.rxxxReportStatus != 1">未筛查</div>
+                <div v-if="scope.row.rxxxReportStatus != null && scope.row.rxxxReportStatus != 1">-</div>
                 <div v-if="scope.row.rxxxReportStatus == null">-</div>
             </template>
           </el-table-column>
@@ -39,7 +39,7 @@
                 <el-button type="text" size="small" v-if="scope.row.rxcsReportStatus == 1"  @click="reportView(scope.row,'rxcs')">查看报告</el-button>
                 <el-button type="text" size="small" v-if="scope.row.rxcsReportSendStatus == 2 && scope.row.rxcsReportStatus == 1" @click="sendReport(3,scope.row)">发放报告</el-button>
                 <el-button type="text" size="small" v-if="scope.row.rxcsReportSendStatus == 1" @click="seeReport(3,scope.row)">查看发放登记</el-button>
-                <div v-if="scope.row.rxcsReportStatus != null && scope.row.rxcsReportStatus != 1">未筛查</div>
+                <div v-if="scope.row.rxcsReportStatus != null && scope.row.rxcsReportStatus != 1">-</div>
                 <div v-if="scope.row.rxcsReportStatus == null">-</div>
             </template>
           </el-table-column>
@@ -48,11 +48,11 @@
             width="150"
             >
             <template slot-scope="scope">
-                <el-button type="text" size="small" v-if="scope.row.sxhdReportStatus == 1 && scope.row.sxhdPathologyReportStatus == 1"  @click="reportView(scope.row,'sxhdnj')">查看报告</el-button>
-                <el-button type="text" size="small" v-if="scope.row.sxhdReportSendStatus == 2 && scope.row.sxhdReportStatus == 1" @click="sendReport(4,scope.row)">发放报告</el-button>
+                <el-button type="text" size="small" v-if="scope.row.sxhdResultEsophagus!=null || scope.row.sxhdResultGastric!=null"  @click="reportView(scope.row,'sxhdnj')">查看报告</el-button>
+                <el-button type="text" size="small" v-if="(scope.row.sxhdResultEsophagus!=null || scope.row.sxhdResultGastric!=null) && scope.row.sxhdReportSendStatus != 1" @click="sendReport(4,scope.row)">发放报告</el-button>
                 <el-button type="text" size="small" v-if="scope.row.sxhdReportSendStatus == 1" @click="seeReport(4,scope.row)">查看发放登记</el-button>
-                <div v-if="(scope.row.sxhdReportStatus != null && scope.row.sxhdReportStatus != 1) || (scope.row.sxhdPathologyReportStatus != null && scope.row.sxhdPathologyReportStatus != 1) ">未筛查</div>
-                <div v-if="scope.row.sxhdReportStatus == null">-</div>
+                <div v-if="(scope.row.sxhdReportStatus != null && scope.row.sxhdReportStatus != 1) || (scope.row.sxhdPathologyReportStatus != null && scope.row.sxhdPathologyReportStatus != 1) ">-</div>
+                <div v-if="scope.row.sxhdResultEsophagus == null && scope.row.sxhdResultGastric==null">-</div>
             </template>
           </el-table-column>
           <el-table-column
@@ -60,22 +60,22 @@
             width="150"
             >
             <template slot-scope="scope">
-                <el-button type="text" size="small" v-if="scope.row.cjReportStatus == 1 && scope.row.cjPathologyReportStatus == 1"  @click="reportView(scope.row,'cj')">查看报告</el-button>
-                <el-button type="text" size="small" v-if="scope.row.cjReportSendStatus == 2 && scope.row.cjReportStatus == 1" @click="sendReport(5,scope.row)">发放报告</el-button>
+                <el-button type="text" size="small" v-if="scope.row.cjResultStatus!=null"  @click="reportView(scope.row,'cj')">查看报告</el-button>
+                <el-button type="text" size="small" v-if="scope.row.cjResultStatus!=null && scope.row.cjReportSendStatus != 1" @click="sendReport(5,scope.row)">发放报告</el-button>
                 <el-button type="text" size="small" v-if="scope.row.cjReportSendStatus == 1" @click="seeReport(5,scope.row)">查看发放登记</el-button>
-                <div v-if="(scope.row.cjReportStatus != null && scope.row.cjReportStatus != 1) || (scope.row.cjPathologyReportStatus != null && scope.row.cjPathologyReportStatus != 1)">未筛查</div>
-                <div v-if="scope.row.cjReportStatus == null">-</div>
+                <!-- <div v-if="(scope.row.cjReportStatus != null && scope.row.cjReportStatus != 1) || (scope.row.cjPathologyReportStatus != null && scope.row.cjPathologyReportStatus != 1)">未筛查</div> -->
+                <div v-if="scope.row.cjResultStatus == null">-</div>
             </template>
           </el-table-column>
            <el-table-column
-            label="肝超生报告"
+            label="肝超声报告"
             width="150"
             >
             <template slot-scope="scope">
                 <el-button type="text" size="small" v-if="scope.row.gaReportStatus == 1"  @click="reportView(scope.row,'gcs')">查看报告</el-button>
                 <el-button type="text" size="small" v-if="scope.row.gaReportSendStatus == 2 && scope.row.gaReportStatus == 1" @click="sendReport(6,scope.row)">发放报告</el-button>
                 <el-button type="text" size="small" v-if="scope.row.gaReportSendStatus == 1" @click="seeReport(6,scope.row)">查看发放登记</el-button>
-                <div v-if="scope.row.gaReportStatus != null && scope.row.gaReportStatus != 1">未筛查</div>
+                <div v-if="scope.row.gaReportStatus != null && scope.row.gaReportStatus != 1">-</div>
                 <div v-if="scope.row.gaReportStatus == null">-</div>
             </template>
           </el-table-column>
@@ -91,7 +91,7 @@
         :total="queryResult.totalPageCount">
       </el-pagination>
       <!-- 弹窗 -->
-      <el-dialog :title="dialogTitle" :visible.sync="dialogFormVisible" :show-close="false" width="40%" @close="handleClose">
+      <el-dialog :title="dialogTitle" :visible.sync="dialogFormVisible" :show-close="false" width="40%" :close-on-click-modal="false" @close="handleClose">
         <el-form :model="form" :rules="rules" ref="form" label-width="150px">
           <el-form-item label="发放方式：" prop="sendType">
             <el-select v-model="form.sendType" placeholder="请选择发放方式" style="width:300px" clearable :disabled="disabledStatus">
@@ -137,6 +137,7 @@ import { tableConfig } from "./tableConfig";
 export default {
     data(){
         return{
+          loading:true,
            searchData:searchConfig,
            propsData:tableConfig,
            qc:{
@@ -202,19 +203,23 @@ export default {
               if(res.data.status == "SUCCESS") {
                  this.tableData = res.data.result.list;
                  this.queryResult.totalPageCount = res.data.result.total;
+                 this.loading = false
               }
             });
         },
         searchHandler(val) {
+            this.loading = true
             this.qc = val;
             this.query();
         },
         tableSizeChange(val){
+                this.loading = true
                 this.formData = this.getFormData('screeningCollect');
                 this.queryResult.pageSize = val;
                 this.query();
         },
         tablePageChange(val){
+                this.loading = true
                 this.formData = this.getFormData('screeningCollect');
                 this.queryResult.pageNo = val
                 this.query();
@@ -236,12 +241,12 @@ export default {
                this.dialogTitle = '结直肠镜筛查报告发放';
                this.checkProject = 'cj'
             }else if(params == 6){
-               this.dialogTitle = '肝超生筛查报告发放';
+               this.dialogTitle = '肝超声筛查报告发放';
                this.checkProject = 'gcs'
             }
+            this.dialogFormVisible = true;
+            this.disabledStatus = false;
             this.dialogRow = row;
-            this.disabledStatus = true;
-            this.disabledDate = false;
             
         },
         handleClose(){
@@ -293,7 +298,7 @@ export default {
                this.dialogTitle = '结直肠镜筛查报告发放';
                id = row.cjReportSendId;
             }else if(params == 6){
-               this.dialogTitle = '肝超生筛查报告发放';
+               this.dialogTitle = '肝超声筛查报告发放';
                id = row.gaReportSendId;
             }
             this.$axios_http({
